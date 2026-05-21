@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="uz" class="h-full antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Misol va masalalar yechish metodikasi — iOS 26 Premium Glassmorphism</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            500: '#a6adbb', /* Premium Silver/Slate */
+                            600: '#7e899a',
+                            700: '#4b5563',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Display"', 'Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts for Fallback -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- MathJax for rendering gorgeous math equations (fractions, roots, integrals, matrices) -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$']],
+                processEscapes: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* iOS style Premium Silver Glassmorphism */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.22);
+            backdrop-filter: blur(35px) saturate(160%);
+            -webkit-backdrop-filter: blur(35px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            box-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        .glass-button {
+            background: rgba(255, 255, 255, 0.35);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dark .glass-button {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-button:hover {
+            background: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        .dark .glass-button:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+        
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(148, 163, 184, 0.5);
+            border-radius: 10px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(100, 116, 139, 0.5);
+        }
+
+        /* Prevent zooming on iOS inputs */
+        input, select { font-size: 16px !important; }
+    </style>
+</head>
+
+<body class="bg-[#f3f4f6] dark:bg-[#090d16] text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-500 overflow-x-hidden selection:bg-brand-500/30 font-sans">
+
+    <!-- Ambient Dynamic Background Orbs for iOS Style depth -->
+    <div class="fixed top-[-10%] left-[-10%] w-[60vw] h-[60vw] bg-slate-300/30 dark:bg-slate-900/40 rounded-full blur-[120px] pointer-events-none z-0"></div>
+    <div class="fixed bottom-[-10%] right-[-10%] w-[60vw] h-[60vw] bg-slate-400/20 dark:bg-slate-800/30 rounded-full blur-[140px] pointer-events-none z-0"></div>
+
+    <!-- TOP HEADER BAR (Dynamic Island Style) -->
+    <header class="fixed top-2 sm:top-4 left-1/2 -translate-x-1/2 w-[calc(100%-1rem)] sm:w-[calc(100%-2rem)] max-w-7xl z-40 transition-all">
+        <div class="glass-panel rounded-[24px] h-16 sm:h-20 flex items-center justify-between px-4 sm:px-6">
+            
+            <!-- Logo & Brand -->
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-slate-200 to-slate-400 dark:from-slate-700 dark:to-slate-900 rounded-full flex items-center justify-center text-slate-800 dark:text-slate-200 shadow-inner border border-white/40 dark:border-white/10">
+                    <i class="fa-solid fa-square-root-variable text-lg sm:text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm sm:text-lg font-extrabold tracking-tight text-slate-950 dark:text-white leading-tight">Masalalar Metodikasi</h1>
+                    <p class="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 font-bold">Maxsus 100 ta Test</p>
+                </div>
+            </div>
+
+            <!-- Custom Telegram Promos & Controls -->
+            <div class="flex items-center gap-2 sm:gap-3">
+                <!-- User Profile badge -->
+                <div class="hidden lg:flex items-center gap-2 px-3 py-1.5 glass-panel rounded-full text-xs font-bold text-slate-700 dark:text-slate-300">
+                    <div class="w-6 h-6 rounded-full bg-slate-400/30 flex items-center justify-center text-[10px] font-black">YB</div>
+                    <span>Tuzuvchi: @yomonboIa</span>
+                </div>
+
+                <a href="https://t.me/yovvoyiroq" target="_blank" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 active:scale-95 text-white rounded-full text-xs sm:text-sm font-black shadow-lg shadow-blue-500/20 transition-all border border-blue-400/30">
+                    <i class="fa-brands fa-telegram text-base"></i>
+                    <span class="hidden sm:inline">Kanal:</span> @yovvoyiroq
+                </a>
+
+                <button id="themeToggleBtn" onclick="toggleTheme()" class="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center glass-button rounded-full text-slate-700 dark:text-slate-300 transition-all">
+                    <i id="themeIcon" class="fa-solid fa-moon text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP WRAPPER -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 pt-24 sm:pt-32 pb-6 flex flex-col lg:flex-row gap-6 relative z-10">
+
+        <!-- LEFT BAR: DASHBOARD & NAVIGATION -->
+        <section class="w-full lg:w-[340px] flex flex-col gap-5 shrink-0">
+            
+            <!-- STATS CARD -->
+            <div class="glass-panel rounded-[32px] p-6 transition-all">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 flex items-center justify-between">
+                    <span>Natijalar paneli</span>
+                    <i class="fa-solid fa-chart-pie opacity-50"></i>
+                </h2>
+                
+                <div class="grid grid-cols-2 gap-3 mb-5">
+                    <div class="glass-button p-4 rounded-2xl text-center border-emerald-500/20 dark:border-emerald-400/10">
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wide">To'g'ri</p>
+                        <p id="correctCountText" class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</p>
+                    </div>
+                    <div class="glass-button p-4 rounded-2xl text-center border-rose-500/20 dark:border-rose-400/10">
+                        <p class="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wide">Noto'g'ri</p>
+                        <p id="wrongCountText" class="text-2xl font-black text-rose-600 dark:text-rose-400 mt-1">0</p>
+                    </div>
+                </div>
+
+                <!-- Progress Bar -->
+                <div>
+                    <div class="flex justify-between text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2 uppercase tracking-wide">
+                        <span>O'zlashtirish</span>
+                        <span id="progressBarPercentage">0%</span>
+                    </div>
+                    <div class="w-full h-3 glass-button rounded-full overflow-hidden p-0.5">
+                        <div id="progressBarFill" class="h-full bg-gradient-to-r from-slate-400 to-slate-600 dark:from-slate-500 dark:to-slate-300 rounded-full transition-all duration-500 ease-out shadow-sm" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between text-[10px] font-semibold text-slate-400 dark:text-slate-500 mt-3 uppercase tracking-wide">
+                        <span id="answeredRatioText">Yechildi: 0 / 100</span>
+                        <span id="bookmarkCountText">Belgilandi: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CONTROLS & SETTINGS -->
+            <div class="glass-panel rounded-[32px] p-6 transition-all flex flex-col gap-5">
+                
+                <!-- Mode Switcher -->
+                <div class="flex p-1 glass-button rounded-2xl relative">
+                    <div id="modeBgPill" class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-white dark:bg-slate-700/50 rounded-xl shadow-sm transition-all duration-300 ease-in-out border border-slate-200/50 dark:border-slate-600/50"></div>
+                    <button id="modeStudyBtn" onclick="changeQuizMode('study')" class="flex-1 py-2.5 text-xs font-bold rounded-xl transition-all text-slate-800 dark:text-white z-10">
+                        O'rganish
+                    </button>
+                    <button id="modeExamBtn" onclick="changeQuizMode('exam')" class="flex-1 py-2.5 text-xs font-bold rounded-xl transition-all text-slate-500 dark:text-slate-400 z-10">
+                        Imtihon
+                    </button>
+                </div>
+
+                <!-- Timer (Exam Only) -->
+                <div id="examTimerContainer" class="hidden overflow-hidden transition-all duration-300">
+                    <div class="glass-button border-rose-500/30 rounded-2xl p-3 flex items-center justify-between text-rose-600 dark:text-rose-400">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-stopwatch animate-pulse text-sm"></i>
+                            <span class="text-xs font-bold uppercase tracking-wide">Qolgan vaqt:</span>
+                        </div>
+                        <span id="examTimerText" class="font-mono text-base font-black">60:00</span>
+                    </div>
+                </div>
+
+                <!-- Filter & Search -->
+                <div class="flex flex-col gap-3">
+                    <div class="relative">
+                        <select id="categoryFilter" onchange="filterQuestions()" class="w-full glass-button appearance-none rounded-2xl pl-4 pr-10 py-3 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400/50">
+                            <option value="all" class="text-slate-800 dark:text-slate-300">Barchasi (100 ta matematika testi)</option>
+                            <option value="bookmarked" class="text-slate-800 dark:text-slate-300">Saqlanganlar (Yulduzcha)</option>
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-3.5 text-xs text-slate-400 pointer-events-none"></i>
+                    </div>
+
+                    <div class="relative">
+                        <input id="searchInput" oninput="filterQuestions()" type="text" placeholder="Savollardan qidirish..." class="w-full glass-button rounded-2xl pl-10 pr-4 py-3 text-xs font-bold text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-slate-400/50 placeholder-slate-400">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-[12px] text-slate-400"></i>
+                    </div>
+                </div>
+
+                <!-- Quick Buttons -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="shuffleCurrentQuestions()" class="py-3 glass-button hover:bg-white/60 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-bold text-[11px] uppercase tracking-wide rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95">
+                        <i class="fa-solid fa-shuffle text-sm"></i> Aralashtirish
+                    </button>
+                    <button onclick="resetQuizState()" class="py-3 glass-button border-rose-500/20 hover:bg-rose-50/50 dark:hover:bg-rose-900/20 text-rose-600 dark:text-rose-400 font-bold text-[11px] uppercase tracking-wide rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95">
+                        <i class="fa-solid fa-rotate-right text-sm"></i> Tozalash
+                    </button>
+                </div>
+            </div>
+
+            <!-- INDEX GRID MAP CARD -->
+            <div class="glass-panel rounded-[32px] p-6 transition-all flex flex-col flex-1 min-h-[250px]">
+                <h2 class="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-4 flex items-center justify-between">
+                    <span>Xarita</span>
+                    <span id="filteredCountBadge" class="text-[10px] glass-button px-2.5 py-1 rounded-full font-black text-slate-500">100/100</span>
+                </h2>
+                
+                <!-- Map Indicators -->
+                <div class="flex flex-wrap gap-x-3 gap-y-2 text-[9px] uppercase tracking-wide text-slate-400 dark:text-slate-500 font-bold mb-4">
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 glass-button rounded-full"></span> Ochiq</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-emerald-500/80 rounded-full"></span> To'g'ri</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-rose-500/80 rounded-full"></span> Xato</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 bg-yellow-500/80 rounded-full"></span> Yechilgan</span>
+                </div>
+
+                <div id="questionsMapContainer" class="grid grid-cols-5 sm:grid-cols-8 lg:grid-cols-5 gap-2 overflow-y-auto flex-1 pr-1 custom-scrollbar pb-2">
+                    <!-- Dynamic buttons -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- RIGHT BAR: ACTIVE QUESTION -->
+        <section class="flex-1 flex flex-col gap-6">
+            
+            <!-- CURRENT QUESTION CARD -->
+            <div class="glass-panel rounded-[40px] p-6 sm:p-10 transition-all flex flex-col gap-8 relative overflow-hidden h-full">
+                
+                <!-- Upper info row -->
+                <div class="flex items-center justify-between gap-3 z-10">
+                    <div class="flex items-center gap-2">
+                        <div class="px-4 py-1.5 bg-slate-700 dark:bg-slate-200 text-white dark:text-slate-900 text-xs font-black uppercase tracking-wider rounded-full shadow-md">
+                            <span id="questionIndexBadge">SAVOL 1</span>
+                        </div>
+                    </div>
+                    <button id="bookmarkBtn" onclick="toggleBookmarkActiveQuestion()" class="w-12 h-12 flex items-center justify-center rounded-full glass-button hover:bg-white/70 dark:hover:bg-white/20 text-slate-300 dark:text-slate-600 transition-all active:scale-90">
+                        <i class="fa-solid fa-star text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Question Text -->
+                <div class="z-10 min-h-[80px]">
+                    <h3 id="questionTextDisplay" class="text-xl sm:text-2xl font-semibold text-slate-800 dark:text-slate-100 leading-snug tracking-tight">
+                        <!-- LaTeX Question loaded here -->
+                    </h3>
+                </div>
+
+                <!-- Options List -->
+                <div id="optionsListContainer" class="flex flex-col gap-3 z-10 flex-1">
+                    <!-- Option cards rendered dynamically -->
+                </div>
+
+                <!-- Bottom Navigation inside Question Card -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 mt-auto z-10 border-t border-slate-200/30 dark:border-slate-700/30">
+                    <div class="flex gap-3 w-full sm:w-auto">
+                        <button id="prevBtn" onclick="navigateToQuestion(-1)" class="flex-1 sm:flex-initial px-6 py-3.5 glass-button hover:bg-white/60 dark:hover:bg-white/10 rounded-2xl font-bold text-xs uppercase tracking-wide text-slate-600 dark:text-slate-300 flex items-center justify-center gap-2 transition-all active:scale-95">
+                            <i class="fa-solid fa-arrow-left"></i> Oldingi
+                        </button>
+                        <button id="nextBtn" onclick="navigateToQuestion(1)" class="flex-1 sm:flex-initial px-6 py-3.5 bg-slate-800 dark:bg-slate-200 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 shadow-xl shadow-slate-900/20 dark:shadow-white/10 rounded-2xl font-bold text-xs uppercase tracking-wide flex items-center justify-center gap-2 transition-all active:scale-95">
+                            Keyingi <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+
+                    <button id="examSubmitBtn" onclick="finishExamPrompt()" class="hidden w-full sm:w-auto px-6 py-3.5 bg-gradient-to-r from-emerald-400 to-emerald-600 hover:from-emerald-500 hover:to-emerald-700 text-white rounded-2xl font-bold text-xs uppercase tracking-wide shadow-lg shadow-emerald-500/30 flex items-center justify-center gap-2 transition-all active:scale-95">
+                        <i class="fa-solid fa-flag-checkered"></i> Imtihonni Yakunlash
+                    </button>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- EXAM FINISH REPORT MODAL -->
+    <div id="examResultModal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity"></div>
+        
+        <!-- Modal Content -->
+        <div class="glass-panel relative rounded-[40px] max-w-md w-full overflow-hidden shadow-2xl border border-white/40 dark:border-white/10 p-1 z-10 transform scale-95 opacity-0 transition-all duration-300" id="modalContentInner">
+            <div class="bg-white/60 dark:bg-slate-900/60 rounded-[36px] p-8 flex flex-col items-center text-center">
+                
+                <div class="w-20 h-20 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center text-3xl mb-6 shadow-inner border border-emerald-500/30">
+                    <i class="fa-solid fa-trophy"></i>
+                </div>
+                
+                <h3 class="text-2xl font-black text-slate-800 dark:text-white mb-2">Imtihon Yakunlandi!</h3>
+                <p class="text-sm font-medium text-slate-500 dark:text-slate-400">Natijalaringiz hisoblab chiqildi.</p>
+
+                <!-- Detailed Stats -->
+                <div class="my-8 grid grid-cols-3 gap-3 w-full">
+                    <div class="glass-button p-4 rounded-3xl text-center">
+                        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">Jami</p>
+                        <p id="modalTotalAnswered" class="text-xl font-black text-slate-700 dark:text-slate-200 mt-1">0</p>
+                    </div>
+                    <div class="glass-button border-emerald-500/30 bg-emerald-500/10 p-4 rounded-3xl text-center">
+                        <p class="text-[9px] font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest">To'g'ri</p>
+                        <p id="modalCorrect" class="text-xl font-black text-emerald-600 dark:text-emerald-400 mt-1">0</p>
+                    </div>
+                    <div class="glass-button border-rose-500/30 bg-rose-500/10 p-4 rounded-3xl text-center">
+                        <p class="text-[9px] font-bold text-rose-600 dark:text-rose-400 uppercase tracking-widest">Xato</p>
+                        <p id="modalIncorrect" class="text-xl font-black text-rose-600 dark:text-rose-400 mt-1">0</p>
+                    </div>
+                </div>
+
+                <!-- Percent Display -->
+                <div class="w-full h-4 glass-button rounded-full mb-3 overflow-hidden p-0.5">
+                    <div id="modalPercentBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full" style="width: 0%"></div>
+                </div>
+                <p id="modalPercentText" class="text-sm font-black text-slate-700 dark:text-slate-200 mb-1">Ko'rsatkich: 0%</p>
+                <p id="modalGradeText" class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-8"></p>
+
+                <div class="w-full flex flex-col gap-3">
+                    <button onclick="reviewExamAnswers()" class="w-full py-4 bg-slate-800 dark:bg-slate-200 hover:bg-slate-700 dark:hover:bg-white text-white dark:text-slate-900 font-bold text-sm uppercase tracking-wide rounded-2xl transition-all shadow-xl active:scale-95">
+                        Xatolarni ko'rib chiqish
+                    </button>
+                    <button onclick="closeModalAndReset()" class="w-full py-4 glass-button hover:bg-white/60 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 font-bold text-xs uppercase tracking-wide rounded-2xl transition-all active:scale-95">
+                        Qayta boshlash
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AUDIO SYSTEM -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playQuizSound(type) {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); 
+                    osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); 
+                    gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+                    osc.frequency.setValueAtTime(100, audioCtx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                }
+            } catch (err) {}
+        }
+    </script>
+
+    <!-- CORE MATHEMATICAL DATABASE WITH LATEX -->
+    <script>
+        const rawQuestionsData = [
+            {
+                id: 1,
+                q: "Hisoblab to'g'ri javobini toping: $1-3+5-7+9-11 \\dots 97-99$",
+                answer: "-50",
+                options: ["-50", "20", "49", "12"]
+            },
+            {
+                id: 2,
+                q: "Ifodaning qiymatini toping: $\\sqrt{4-2\\sqrt{3}} - \\sqrt{4+2\\sqrt{3}}$",
+                answer: "-2",
+                options: ["-2", "2", "8", "-2\\sqrt{3}"]
+            },
+            {
+                id: 3,
+                q: "$a$ ning qanday qiymatida $\\begin{cases} ax + 3y = 4 \\\\ 2x - 6y = 5 \\end{cases}$ tenglamalar sistemasi yechimiga ega emas?",
+                answer: "-1",
+                options: ["-1", "4", "2", "3"]
+            },
+            {
+                id: 4,
+                q: "Agar $\\log_2 3 = a$ va $\\log_2 5 = b$ bo'lsa, $\\log_2 120$ ni $a$ va $b$ lar orqali ifodalang.",
+                answer: "$3 + a + b$",
+                options: ["$3 + a + b$", "$2a + b$", "$3 + 2a - b$", "$1 + 2a + b$"]
+            },
+            {
+                id: 5,
+                q: "$x^2 - 4x + 3 = 0$ tenglamaning yechimi qaysi oraliqda yotadi?",
+                answer: "$[1; 3]$",
+                options: ["$[1; 3]$", "$[2; 5]$", "$[-1; 2]$", "$[0; 1]$"]
+            },
+            {
+                id: 6,
+                q: "Tenglamani yeching: $4^x - 5 \\cdot 2^x + 4 = 0$",
+                answer: "$x_1 = 0, x_2 = 2$",
+                options: ["$x_1 = 0, x_2 = 2$", "$x=1$", "$x_1 = -1, x_2 = 2$", "$x=3$"]
+            },
+            {
+                id: 7,
+                q: "Hisoblang: $\\frac{1}{1 \\cdot 2} + \\frac{1}{2 \\cdot 3} + \\frac{1}{3 \\cdot 4} + \\dots + \\frac{1}{99 \\cdot 100}$",
+                answer: "$0.99$",
+                options: ["$0.99$", "$0.999$", "$0.998$", "$1$"]
+            },
+            {
+                id: 8,
+                q: "Tengsizlikni yeching: $\\frac{x-3}{x+2} \\le 0$",
+                answer: "$(-2; 3]$",
+                options: ["$(-2; 3]$", "$[-2; 3]$", "$(-\\infty; -2)$", "$[3; \\infty)$"]
+            },
+            {
+                id: 9,
+                q: "$A + B = C$ (bunda $A$ - ikki xonali, $B$ - uch xonali, $C$ - to'rt xonali son bo'lsa), ularning eng kichik qiymatida $A$ ni toping.",
+                answer: "10",
+                options: ["10", "2", "9", "Aniqlab bo'lmaydi"]
+            },
+            {
+                id: 10,
+                q: "Agar $x + \\frac{1}{x} = 3$ bo'lsa, $x^2 + \\frac{1}{x^2}$ ning qiymatini toping.",
+                answer: "7",
+                options: ["7", "9", "11", "12"]
+            },
+            {
+                id: 11,
+                q: "$0! + 2! + 4! + \\dots + 66!$ yig'indining birlar xonasidagi raqamni toping.",
+                answer: "7",
+                options: ["7", "2", "5", "9"]
+            },
+            {
+                id: 12,
+                q: "$S = 1 \\cdot 2 + 2 \\cdot 3 + 3 \\cdot 4 + \\dots + 20 \\cdot 21$ yig'indini hosil qiluvchi har bir hadining ikkinchi ko'paytuvchisi bittadan kamaytirilsa, yig'indi qanchaga kamayadi?",
+                answer: "210",
+                options: ["210", "678", "345", "908"]
+            },
+            {
+                id: 13,
+                q: "$100!$ sonining oxirida nechta nol bor?",
+                answer: "24",
+                options: ["24", "35", "25", "20"]
+            },
+            {
+                id: 14,
+                q: "Ko'paytuvchilarga ajrating: $a^4 + 4$",
+                answer: "$(a^2 - 2a + 2)(a^2 + 2a + 2)$",
+                options: ["$(a^2 - 2a + 2)(a^2 + 2a + 2)$", "$(a^2 - 2)(a^2 + 2)$", "$(a^2 + 2a - 2)^2$", "$(a^2 - 2a - 2)^2$"]
+            },
+            {
+                id: 15,
+                q: "Soddalashtiring: $\\frac{a^3 - b^3}{a^2 + ab + b^2}$",
+                answer: "$a - b$",
+                options: ["$a - b$", "$a + b$", "$a^2 - b^2$", "$1$"]
+            },
+            {
+                id: 16,
+                q: "Soddalashtiring: $\\frac{4^{n+2} - 4^n}{4^n}$",
+                answer: "15",
+                options: ["15", "16", "4", "2"]
+            },
+            {
+                id: 17,
+                q: "$a + b + c = 6$ bo'lsa, $a, b, c$ natural sonlar yordamida nechta turli uch xonali son yozish mumkin?",
+                answer: "10",
+                options: ["10", "6", "3", "12"]
+            },
+            {
+                id: 18,
+                q: "Hisoblang: $\\cos 15^\\circ \\cdot \\sin 15^\\circ$",
+                answer: "$0.25$",
+                options: ["$0.25$", "$0.5$", "$1$", "0"]
+            },
+            {
+                id: 19,
+                q: "Tenglamani yeching: $|x - 3| = 2$",
+                answer: "$x_1=1, x_2=5$",
+                options: ["$x_1=1, x_2=5$", "$x_1=-1, x_2=3$", "$x_1=-2, x_2=2$", "3"]
+            },
+            {
+                id: 20,
+                q: "Tenglamaning haqiqiy ildizlari yig'indisini toping: $x^4 - 5x^2 + 4 = 0$",
+                answer: "0",
+                options: ["0", "3", "4", "2"]
+            },
+            {
+                id: 21,
+                q: "Ifodaning qiymatini toping: $2^{10} \\cdot 5^{10} \\div 10^9$",
+                answer: "10",
+                options: ["10", "2", "5", "1"]
+            },
+            {
+                id: 22,
+                q: "$y-x$ ning qiymatini toping, agar $\\begin{cases} x + y = 15 \\\\ x - y = 5 \\end{cases}$ bo'lsa.",
+                answer: "-5",
+                options: ["-5", "5", "10", "15"]
+            },
+            {
+                id: 23,
+                q: "Tenglamalar sistemasi nechta yechimga ega? $\\begin{cases} x^2 + y^2 = 9 \\\\ y = x^2 + 4 \\end{cases}$",
+                answer: "Yechimga ega emas",
+                options: ["Yechimga ega emas", "2", "1", "4"]
+            },
+            {
+                id: 24,
+                q: "$a = \\sqrt{2}$ va $b = \\sqrt[3]{3}$ sonlari uchun quyidagilarning qaysi biri to'g'ri?",
+                answer: "$a < b$",
+                options: ["$a < b$", "$a > b$", "$a = b$", "$a \\ge b$"]
+            },
+            {
+                id: 25,
+                q: "$\\frac{x-3}{5} < 2$ ifodada $x$ ning qabul qilishi mumkin bo'lgan eng katta butun soni nechaga teng?",
+                answer: "12",
+                options: ["12", "13", "11", "9"]
+            },
+            {
+                id: 26,
+                q: "Ushbu tengsizlikning tub sonlardan iborat nechta yechimi bor? $x^2 - 10x + 21 \\le 0$",
+                answer: "2",
+                options: ["2", "4", "1", "6"]
+            },
+            {
+                id: 27,
+                q: "Funksiyaning aniqlanish sohasini toping: $y = \\sqrt{x - 4}$",
+                answer: "$[4; \\infty)$",
+                options: ["$[4; \\infty)$", "$(4; \\infty)$", "$(-\\infty; 4]$", "$R$"]
+            },
+            {
+                id: 28,
+                q: "Tengsizlikning barcha butun yechimlari yig'indisini toping: $|x| \\le 3$",
+                answer: "0",
+                options: ["0", "7", "5", "3"]
+            },
+            {
+                id: 29,
+                q: "Funksiyaning aniqlanish sohasini toping: $y = \\log_2(x^2 - 4)$",
+                answer: "$(-\\infty; -2) \\cup (2; \\infty)$",
+                options: ["$(-\\infty; -2) \\cup (2; \\infty)$", "$[-2; 2]$", "$R$", "$(2; \\infty)$"]
+            },
+            {
+                id: 30,
+                q: "Hisoblang: $\\log_2 16 + \\log_3 27$",
+                answer: "7",
+                options: ["7", "10", "12", "14"]
+            },
+            {
+                id: 31,
+                q: "Tenglamani yeching: $\\cos x = 1$",
+                answer: "$2\\pi k, k \\in Z$",
+                options: ["$2\\pi k, k \\in Z$", "$\\pi k, k \\in Z$", "$\\frac{\\pi}{2} + \\pi k$", "0"]
+            },
+            {
+                id: 32,
+                q: "Tenglamaning nechta ildizi bor: $\\sqrt{x-2} = -3$?",
+                answer: "Yechimga ega emas",
+                options: ["Yechimga ega emas", "1", "2", "Cheksiz ko'p"]
+            },
+            {
+                id: 33,
+                q: "$a$ ning qanday qiymatlarida $|a-2| = 2-a$ tenglik o'rinli bo'lladi?",
+                answer: "$a \\le 2$",
+                options: ["$a \\le 2$", "$a \\ge 2$", "$a < 2$", "$a > 0$"]
+            },
+            {
+                id: 34,
+                q: "$x^2 - 8x + 12 = 0$ tenglamaning ildizlari ko'paytmasini toping.",
+                answer: "12",
+                options: ["12", "-12", "8", "-8"]
+            },
+            {
+                id: 35,
+                q: "$x^2 - 10x + 9 = 0$ tenglamaning ildizlari yig'indisini toping.",
+                answer: "10",
+                options: ["10", "-10", "9", "1"]
+            },
+            {
+                id: 36,
+                q: "Tengsizlikning yechimlari yig'indisini toping: $x^2 - 5x \\le 0$ ($x \\in Z$)",
+                answer: "15",
+                options: ["15", "10", "5", "0"]
+            },
+            {
+                id: 37,
+                q: "Tenglama nechta natural yechimga ega: $x+y=5$?",
+                answer: "4",
+                options: ["4", "5", "3", "Cheksiz ko'p"]
+            },
+            {
+                id: 38,
+                q: "Qanday eng kichik butun son ushbu $2x - 5 > 3$ tengsizlikni qanoatlantiradi?",
+                answer: "5",
+                options: ["5", "4", "6", "9"]
+            },
+            {
+                id: 39,
+                q: "Ikki sonning yig'indisi 7 ga, ayirmasi esa 1 ga teng bo'lsa, ularning kvadratlari yig'indisini toping.",
+                answer: "25",
+                options: ["25", "27", "30", "35"]
+            },
+            {
+                id: 40,
+                q: "Ikki sonning yig'indisi 7 ga, ko'paytmasi 10 ga teng bo'lsa, shu sonlarning kvadratlari yig'indisini toping.",
+                answer: "29",
+                options: ["29", "24", "22", "16"]
+            },
+            {
+                id: 41,
+                q: "Raqamlari yig'indisining uchlanganiga teng bo'lgan ikki xonali sonni toping.",
+                answer: "27",
+                options: ["27", "21", "18", "12"]
+            },
+            {
+                id: 42,
+                q: "$3^{2026}$ soni qanday raqam bilan tugaydi?",
+                answer: "9",
+                options: ["9", "3", "1", "7"]
+            },
+            {
+                id: 43,
+                q: "Tenglamani yeching: $\\sqrt{x + 4} = 3$",
+                answer: "5",
+                options: ["5", "2", "9", "1"]
+            },
+            {
+                id: 44,
+                q: "Tenglamani yeching: $\\log_3(x-2) = 2$",
+                answer: "11",
+                options: ["11", "9", "8", "13"]
+            },
+            {
+                id: 45,
+                q: "$23 - 6x > 1$ tengsizlikning eng katta butun yechimini toping.",
+                answer: "3",
+                options: ["3", "2", "1", "0"]
+            },
+            {
+                id: 46,
+                q: "Tenglamani yeching: $3^{x-2} = 27$",
+                answer: "5",
+                options: ["5", "3", "4", "6"]
+            },
+            {
+                id: 47,
+                q: "Raqamlari bir xil bo'lmagan, beshta ikki xonali sonning yig'indisi 130 ga teng. Bu sonlarning eng kattasi ko'pi bilan necha bo'lishi mumkin?",
+                answer: "86",
+                options: ["86", "81", "89", "56"]
+            },
+            {
+                id: 48,
+                q: "$7^{103}$ soni qanday raqam bilan tugaydi?",
+                answer: "3",
+                options: ["3", "9", "7", "1"]
+            },
+            {
+                id: 49,
+                q: "Markazi $M(2; -3)$ nuqtada va radiusi $R=4$ bo'lgan aylananing tenglamasini ko'rsating.",
+                answer: "$(x-2)^2 + (y+3)^2 = 16$",
+                options: ["$(x-2)^2 + (y+3)^2 = 16$", "$(x+2)^2 + (y-3)^2 = 16$", "$(x-2)^2 + (y+3)^2 = 4$", "0"]
+            },
+            {
+                id: 50,
+                q: "$x^2 + y^2 = 25$ aylananing $A(3; 4)$ nuqtasiga o'tkazilgan urinma tenglamasini tuzing.",
+                answer: "$3x + 4y - 25 = 0$",
+                options: ["$3x + 4y - 25 = 0$", "$3x - 4y + 25 = 0$", "$4x + 3y - 25 = 0$", "$3x + 4y = 0$"]
+            },
+            {
+                id: 51,
+                q: "$y = 3 \\sin x + 4 \\cos x$ funksiyaning qiymatlar sohasini toping.",
+                answer: "$[-5; 5]$",
+                options: ["$[-5; 5]$", "$[-7; 7]$", "$[-3; 4]$", "$[-1; 1]$"]
+            },
+            {
+                id: 52,
+                q: "$3x + 4y - 12 = 0$ to'g'ri chizig'i $x^2 + y^2 = R^2$ aylanasiga urinma bo'lsa, $R$ radiusi nechaga teng?",
+                answer: "$2.4$",
+                options: ["$2.4$", "3", "2", "5"]
+            },
+            {
+                id: 53,
+                q: "$2^1 + 2^2 + 2^3 + \\dots + 2^{10}$ yig'indining oxirgi raqamini toping.",
+                answer: "6",
+                options: ["6", "4", "2", "8"]
+            },
+            {
+                id: 54,
+                q: "Teng yonli trapetsiyaning balandligi 5 ga teng bo'lib, diagonallari o'zaro perpendikulyar. Trapetsiyaning yuzini toping.",
+                answer: "25",
+                options: ["25", "10", "15", "20"]
+            },
+            {
+                id: 55,
+                q: "Hisoblang: $\\sqrt{12 + \\sqrt{12 + \\sqrt{12 + \\dots}}}$",
+                answer: "4",
+                options: ["4", "3", "2", "6"]
+            },
+            {
+                id: 56,
+                q: "Agar $a < 0 < b < c$ bo'lsa, $|a - b| + |b - c| + |c - a|$ ifodani soddalashtiring.",
+                answer: "$2c - 2a$",
+                options: ["$2c - 2a$", "$2c + 2a$", "$4c - 4a$", "$0$"]
+            },
+            {
+                id: 57,
+                q: "$3^{30}$ soni $9^{14}$ sonidan necha marta katta?",
+                answer: "9",
+                options: ["9", "3", "27", "81"]
+            },
+            {
+                id: 58,
+                q: "Hisoblang: $\\sin 20^\\circ \\cdot \\sin 40^\\circ \\cdot \\sin 80^\\circ$",
+                answer: "$\\frac{\\sqrt{3}}{8}$",
+                options: ["$\\frac{\\sqrt{3}}{8}$", "$\\frac{1}{8}$", "$\\frac{3}{8}$", "$\\frac{\\sqrt{3}}{4}$"]
+            },
+            {
+                id: 59,
+                q: "$x^2 + y^2 = 4$ aylanadagi ixtiyoriy nuqta $A$ va $(x-6)^2 + y^2 = 1$ aylanadagi ixtiyoriy nuqta $B$ bo'lsin. $AB$ masofaning eng kichik qiymati qancha?",
+                answer: "3",
+                options: ["3", "4", "2", "1"]
+            },
+            {
+                id: 60,
+                q: "$S = 1 \\cdot 2 + 2 \\cdot 3 + 3 \\cdot 4 + \\dots + 11 \\cdot 12$ yig'indining har bir hadining ikkinchi ko'paytuvchisi bittadan kamaytirilsa, yig'indi qanchaga kamayadi?",
+                answer: "78",
+                options: ["78", "144", "110", "66"]
+            },
+            {
+                id: 61,
+                q: "Bir o'quvchi $ABC$ uch xonali sonini 24 ga ko'paytirganda o'nlar xonasidagi 1 raqamini xato ko'rib, natijani 3240 topdi. To'g'ri javob nechaga teng?",
+                answer: "3480",
+                options: ["3480", "3240", "3120", "2844"]
+            },
+            {
+                id: 62,
+                q: "Tenglamani yeching: $x^2 - 4|x| - 5 = 0$",
+                answer: "$\\pm 5$",
+                options: ["$\\pm 5$", "$5$ va $-1$", "$-5$", "$1$"]
+            },
+            {
+                id: 63,
+                q: "Agar $ab=6$ bo'lsa, $\\frac{a^2 + b^2}{2}$ ifodaning eng kichik qiymatini toping.",
+                answer: "6",
+                options: ["6", "12", "8", "4"]
+            },
+            {
+                id: 64,
+                q: "Agar $P(x)$ ko'phadning darajasi 3, $Q(x)$ ko'phadniki esa 2 bo'lsa, $P(x^3) \\cdot Q(x^2)$ ko'phadning darajasi nechaga teng bo'ladi?",
+                answer: "13",
+                options: ["13", "15", "10", "12"]
+            },
+            {
+                id: 65,
+                q: "To'g'ri burchakli uchburchak gipotenuzasiga o'tkazilgan mediana to'g'ri burchakni $1:2$ nisbatda bo'lsa, uchburchakning o'tkir burchaklarini toping.",
+                answer: "$60^\\circ, 30^\\circ$",
+                options: ["$60^\\circ, 30^\\circ$", "$45^\\circ, 45^\\circ$", "$75^\\circ, 15^\\circ$", "$22.5^\\circ, 67.5^\\circ$"]
+            },
+            {
+                id: 66,
+                q: "$A \\cdot B = 144$ ko'paytirish natijasiga ko'ra $A+B$ ning eng kichik qiymatini toping.",
+                answer: "24",
+                options: ["24", "12", "6", "10"]
+            },
+            {
+                id: 67,
+                q: "$145!$ sonining oxirida nechta nol bor?",
+                answer: "35",
+                options: ["35", "24", "16", "22"]
+            },
+            {
+                id: 68,
+                q: "$x^2 + y^2 = R^2$ aylana $y^2 = 8x + 16$ parabolaga urinuvchi bo'lsa, $R$ radiusi nechaga teng?",
+                answer: "4",
+                options: ["4", "2", "3", "5"]
+            },
+            {
+                id: 69,
+                q: "$a = \\log_3 5, b = \\log_5 9$ bo'lsa, quyidagilardan qaysi biri to'g'ri?",
+                answer: "$a < b$",
+                options: ["$a < b$", "$a > b$", "$a \\cdot b = 1$", "$a = b$"]
+            },
+            {
+                id: 70,
+                q: "Sinfning $\\frac{13}{20}$ qismi o'g'il bolalar. O'g'il bolalar qizlardan 12 taga ko'p bo'lsa, sinfda jami nechta qiz bor?",
+                answer: "14",
+                options: ["14", "16", "12", "10"]
+            },
+            {
+                id: 71,
+                q: "Hisoblang: $\\cos^2 15^\\circ + \\cos^2 75^\\circ$",
+                answer: "1",
+                options: ["1", "5", "3", "4"]
+            },
+            {
+                id: 72,
+                q: "Soddalashtiring: $\\frac{x^2 - 9}{x+3}$",
+                answer: "$x - 3$",
+                options: ["$x - 3$", "$x + 3$", "$3-x$", "$2-x$"]
+            },
+            {
+                id: 73,
+                q: "$y = -(x-6)^2$ va $y = x^2 - k$ parabolalarining uchlari orasidagi masofa 10 birlik bo'lsa, $k$ ning musbat qiymatini toping.",
+                answer: "8",
+                options: ["8", "5", "6", "2"]
+            },
+            {
+                id: 74,
+                q: "Doira tashqarisida yotgan nuqtadan doiraga kesuvchi va uzunligi 20 sm ga teng urinma o'tkazilgan. Kesuvchining tashqi qismining ichki qismiga nisbati $4:5$ bo'lsa, kesuvchining umumiy uzunligini toping.",
+                answer: "30",
+                options: ["30", "45", "26", "32"]
+            },
+            {
+                id: 75,
+                q: "Oltita sonning o'rtacha qiymati 17 ga teng. Unga qaysi son qo'shilsa, o'rtacha qiymat 21 bo'ladi?",
+                answer: "45",
+                options: ["45", "36", "42", "28"]
+            },
+            {
+                id: 76,
+                q: "Tenglamani yeching: $\\sqrt{x + 2} = x$",
+                answer: "2",
+                options: ["2", "4", "Bo'sh to'plam", "3"]
+            },
+            {
+                id: 77,
+                q: "Tenglamani yeching: $|x^2 - 1| = 3$",
+                answer: "$\\pm 2$",
+                options: ["$\\pm 2$", "$[-2; 2]$", "$[-1; 4]$", "$[-3; 3]$"]
+            },
+            {
+                id: 78,
+                q: "Kislota miqdori 2% bo'lgan 20 litr eritma bilan kislota miqdori 8% bo'lgan 10 litr eritma aralashtirilsa, yangi aralashmadagi kislota miqdori necha foiz bo'ladi?",
+                answer: "4%",
+                options: ["4%", "6%", "5%", "3%"]
+            },
+            {
+                id: 79,
+                q: "6 ta qalam va 4 ta o'chirgich narxi 48 so'm, 6 ta o'chirgich va 4 ta qalamniki esa 42 so'm. Bitta qalam bitta o'chirgichdan necha so'm qimmatroq?",
+                answer: "3",
+                options: ["3", "5", "4", "2"]
+            },
+            {
+                id: 80,
+                q: "Sonlarni kamayish tartibida joylashtiring: $a = \\sin 1, b = \\sin 2, c = \\sin 3$.",
+                answer: "$b > a > c$",
+                options: ["$b > a > c$", "$a > b > c$", "$c > b > a$", "$b > c > a$"]
+            },
+            {
+                id: 81,
+                q: "$f(x) = 2x^2 + mx + 1$ va $g(x) = nx^2 + x + 3$ parabolalarning uchlarining abssissalari teng bo'lsa, $m \\cdot n$ ko'paytmasini hisoblang.",
+                answer: "-1",
+                options: ["-1", "4", "3", "5"]
+            },
+            {
+                id: 82,
+                q: "Uchlari $A(0; 3), B(4; 0)$ va $C(0; 0)$ nuqtalarda bo'lgan uchburchakka tashqi chizilgan aylananing tenglamasini toping.",
+                answer: "$(x-2)^2 + (y-1.5)^2 = 6.25$",
+                options: ["$(x-2)^2 + (y-1.5)^2 = 6.25$", "$x^2 + y^2 = 25$", "$(x+2)^2 + (y+1.5)^2 = 6.25$", "$(x-2)^2 + y^2 = 9$"]
+            },
+            {
+                id: 83,
+                q: "Tenglamani yeching: $\\log_2(x^2 - x) = 1$",
+                answer: "$2$ va $-1$",
+                options: ["$2$ va $-1$", "2", "-1", "4"]
+            },
+            {
+                id: 84,
+                q: "Tenglamani yeching: $\\sin x + \\cos x = 0$",
+                answer: "$-\\frac{\\pi}{4} + \\pi k, k \\in Z$",
+                options: ["$-\\frac{\\pi}{4} + \\pi k, k \\in Z$", "$\\frac{\\pi}{4} + \\pi k$", "$\\pi k$", "0"]
+            },
+            {
+                id: 85,
+                q: "Tenglamani yeching: $3^{x^2 - 5x + 6} = 1$",
+                answer: "$2$ va $3$",
+                options: ["$2$ va $3$", "9", "1", "$2$"]
+            },
+            {
+                id: 86,
+                q: "Ushbu $x^2 + y^2 + 2x - 4y + 5 = 0$ tenglama koordinatalar tekisligida nimani ifodalaydi?",
+                answer: "$M(-1; 2)$ nuqtani",
+                options: ["$M(-1; 2)$ nuqtani", "Aylanani", "To'g'ri chiziqni", "Hech narsani"]
+            },
+            {
+                id: 87,
+                q: "Hisoblang: $5! + 4! - 3!$",
+                answer: "138",
+                options: ["138", "88", "120", "74"]
+            },
+            {
+                id: 88,
+                q: "Agar $x > 0$ va $x^2 + \\frac{1}{x^2} = 7$ bo'lsa, $x^3 + \\frac{1}{x^3}$ ning qiymatini toping.",
+                answer: "18",
+                options: ["18", "27", "36", "28"]
+            },
+            {
+                id: 89,
+                q: "Tengsizlikni qanoatlantiruvchi butun sonlar yig'indisini toping: $x^2 - 4x - 5 \\le 0$.",
+                answer: "15",
+                options: ["15", "0", "5", "10"]
+            },
+            {
+                id: 90,
+                q: "$262728293031...72$ sonining raqamlari yig'indisini toping.",
+                answer: "422",
+                options: ["422", "420", "415", "430"]
+            },
+            {
+                id: 91,
+                q: "Hisoblang: $\\frac{\\sin 40^\\circ}{\\sin 20^\\circ}$",
+                answer: "$2 \\cos 20^\\circ$",
+                options: ["$2 \\cos 20^\\circ$", "$2$", "$\\cos 20^\\circ$", "$\\sin 20^\\circ$"]
+            },
+            {
+                id: 92,
+                q: "Kasrni qisqartiring: $\\frac{x^2 - 5x + 6}{x - 2}$",
+                answer: "$x - 3$",
+                options: ["$x - 3$", "$x + 3$", "$x - 2$", "$x - 1$"]
+            },
+            {
+                id: 93,
+                q: "Asosi $a=6$ va balandligi $h=4$ bo'lgan uchburchakning yuzini toping.",
+                answer: "12",
+                options: ["12", "24", "18", "8"]
+            },
+            {
+                id: 94,
+                q: "$y = x^2 - 4x + 7$ parabolaning uchi qaysi chorakda joylashgan?",
+                answer: "I-chorakda",
+                options: ["I-chorakda", "II-chorakda", "III-chorakda", "IV-chorakda"]
+            },
+            {
+                id: 95,
+                q: "Hisoblang: $\\sqrt{25} + \\sqrt[3]{-8}$",
+                answer: "3",
+                options: ["3", "7", "5", "2"]
+            },
+            {
+                id: 96,
+                q: "Aylana radiusi $R=5$ bo'lsa, uning uzunligi nechaga teng?",
+                answer: "$10\\pi$",
+                options: ["$10\\pi$", "$5\\pi$", "$25\\pi$", "$2\\pi$"]
+            },
+            {
+                id: 97,
+                q: "Hisoblang: $\\cos 60^\\circ + \\sin 30^\\circ$",
+                answer: "1",
+                options: ["1", "0.5", "1.5", "2"]
+            },
+            {
+                id: 98,
+                q: "$f(x) = 3x^2 - 12x + 5$ funksiyaning eng kichik qiymatini toping.",
+                answer: "-7",
+                options: ["-7", "5", "2", "-12"]
+            },
+            {
+                id: 99,
+                q: "Geometrik progressiyada $b_1 = 3$ va $q = 2$ bo'lsa, uning dastlabki 5 ta hadi yig'indisini toping.",
+                answer: "93",
+                options: ["93", "96", "90", "84"]
+            },
+            {
+                id: 100,
+                q: "Tenglamani yeching: $x^3 - 4x = 0$",
+                answer: "$x=0, x=\\pm 2$",
+                options: ["$x=0, x=\\pm 2$", "$x=2$", "$x=0, x=4$", "$x=\\pm 1$"]
+            }
+        ];
+
+        // Global State variables
+        let activeQuestions = [...rawQuestionsData];
+        let currentIndex = 0;
+        let quizMode = 'study'; 
+        let examTimerInterval = null;
+        let examSecondsLeft = 3600; 
+        let examAnswers = {}; 
+        let studyResults = {}; 
+        let bookmarkedQuestionIds = JSON.parse(localStorage.getItem('bookmarked_math_questions') || '[]');
+
+        // Initialize Theme from localStorage
+        if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        window.onload = function() {
+            updateThemeToggleButton();
+            loadStateFromLocalStorage();
+            shuffleCurrentQuestions(); 
+        }
+
+        function loadStateFromLocalStorage() {
+            const savedStudyResults = localStorage.getItem('math_study_results');
+            if (savedStudyResults) studyResults = JSON.parse(savedStudyResults);
+        }
+
+        function saveStateToLocalStorage() {
+            localStorage.setItem('math_study_results', JSON.stringify(studyResults));
+            localStorage.setItem('bookmarked_math_questions', JSON.stringify(bookmarkedQuestionIds));
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function shuffleCurrentQuestions() {
+            activeQuestions = shuffleArray(activeQuestions);
+            activeQuestions.forEach(q => {
+                q.shuffledOptions = shuffleArray([...q.options]);
+            });
+            currentIndex = 0;
+            renderQuiz();
+            renderQuestionMap();
+            updateStats();
+        }
+
+        function changeQuizMode(mode) {
+            quizMode = mode;
+            const studyBtn = document.getElementById('modeStudyBtn');
+            const examBtn = document.getElementById('modeExamBtn');
+            const timerContainer = document.getElementById('examTimerContainer');
+            const examSubmitBtn = document.getElementById('examSubmitBtn');
+            const pill = document.getElementById('modeBgPill');
+
+            if (mode === 'study') {
+                pill.style.transform = 'translateX(0)';
+                studyBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+                studyBtn.classList.add('text-slate-800', 'dark:text-white');
+                examBtn.classList.remove('text-slate-800', 'dark:text-white');
+                examBtn.classList.add('text-slate-500', 'dark:text-slate-400');
+                
+                timerContainer.classList.add('hidden');
+                examSubmitBtn.classList.add('hidden');
+                clearInterval(examTimerInterval);
+            } else {
+                pill.style.transform = 'translateX(100%)';
+                examBtn.classList.remove('text-slate-500', 'dark:text-slate-400');
+                examBtn.classList.add('text-slate-800', 'dark:text-white');
+                studyBtn.classList.remove('text-slate-800', 'dark:text-white');
+                studyBtn.classList.add('text-slate-500', 'dark:text-slate-400');
+                
+                timerContainer.classList.remove('hidden');
+                examSubmitBtn.classList.remove('hidden');
+                startExamTimer();
+            }
+            renderQuiz();
+            renderQuestionMap();
+        }
+
+        function startExamTimer() {
+            clearInterval(examTimerInterval);
+            examSecondsLeft = 3600;
+            updateTimerDisplay();
+            examTimerInterval = setInterval(() => {
+                examSecondsLeft--;
+                updateTimerDisplay();
+                if (examSecondsLeft <= 0) {
+                    clearInterval(examTimerInterval);
+                    finishExam(true);
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(examSecondsLeft / 60);
+            const seconds = examSecondsLeft % 60;
+            document.getElementById('examTimerText').innerText = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function filterQuestions() {
+            const cat = document.getElementById('categoryFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            activeQuestions = rawQuestionsData.filter(q => {
+                const searchString = q.q.toLowerCase() + q.options.join(" ").toLowerCase();
+                const matchesSearch = searchString.includes(search);
+                
+                if (cat === 'all') return matchesSearch;
+                if (cat === 'bookmarked') return bookmarkedQuestionIds.includes(q.id) && matchesSearch;
+                return matchesSearch;
+            });
+
+            document.getElementById('filteredCountBadge').innerText = `${activeQuestions.length} / ${rawQuestionsData.length}`;
+
+            currentIndex = 0;
+            renderQuiz();
+            renderQuestionMap();
+            updateStats();
+        }
+
+        function renderQuiz() {
+            const container = document.getElementById('optionsListContainer');
+            
+            if (activeQuestions.length === 0) {
+                document.getElementById('questionTextDisplay').innerHTML = "Savol topilmadi! Iltimos, boshqa qidiruv so'zini yozing.";
+                document.getElementById('questionIndexBadge').innerText = "SAVOL 0";
+                container.innerHTML = `
+                    <div class="p-8 text-center text-slate-400 dark:text-slate-500 font-bold border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-[24px]">
+                        Ro'yxat bo'sh.
+                    </div>`;
+                return;
+            }
+
+            const current = activeQuestions[currentIndex];
+            
+            document.getElementById('questionIndexBadge').innerText = `SAVOL ${currentIndex + 1} / ${activeQuestions.length}`;
+            document.getElementById('questionTextDisplay').innerHTML = current.q;
+
+            const bookmarkBtn = document.getElementById('bookmarkBtn');
+            if (bookmarkedQuestionIds.includes(current.id)) {
+                bookmarkBtn.classList.remove('text-slate-300', 'dark:text-slate-600');
+                bookmarkBtn.classList.add('text-amber-500', 'bg-amber-500/10');
+            } else {
+                bookmarkBtn.classList.add('text-slate-300', 'dark:text-slate-600');
+                bookmarkBtn.classList.remove('text-amber-500', 'bg-amber-500/10');
+            }
+
+            container.innerHTML = "";
+
+            const studyAns = studyResults[current.id];
+            const examAns = examAnswers[current.id];
+
+            current.shuffledOptions.forEach((opt, idx) => {
+                const charLabel = String.fromCharCode(65 + idx);
+                const button = document.createElement('button');
+                button.className = "w-full p-4 sm:p-5 rounded-2xl text-left border text-sm sm:text-base font-semibold transition-all flex items-center justify-between gap-4 active:scale-[0.98] ";
+
+                button.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <span class="w-8 h-8 sm:w-10 sm:h-10 rounded-[10px] glass-button text-slate-700 dark:text-slate-200 flex items-center justify-center font-black shrink-0 shadow-sm text-xs sm:text-sm">
+                            ${charLabel}
+                        </span>
+                        <span class="text-slate-800 dark:text-slate-200 leading-snug">${opt}</span>
+                    </div>
+                `;
+
+                if (quizMode === 'study') {
+                    if (studyAns) {
+                        button.disabled = true;
+                        if (opt === current.answer) {
+                            button.classList.add('border-emerald-400', 'bg-emerald-500/10', 'dark:bg-emerald-500/20');
+                            button.innerHTML += `<span class="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600 text-white flex items-center justify-center text-xs shadow-md shrink-0"><i class="fa-solid fa-check"></i></span>`;
+                        } else if (opt === studyAns.selectedOption) {
+                            button.classList.add('border-rose-400', 'bg-rose-500/10', 'dark:bg-rose-500/20');
+                            button.innerHTML += `<span class="w-7 h-7 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 text-white flex items-center justify-center text-xs shadow-md shrink-0"><i class="fa-solid fa-xmark"></i></span>`;
+                        } else {
+                            button.classList.add('border-slate-200', 'dark:border-slate-700/50', 'opacity-50');
+                        }
+                    } else {
+                        button.classList.add('glass-button', 'hover:bg-white/60', 'dark:hover:bg-white/10');
+                        button.onclick = () => selectStudyOption(current.id, opt);
+                    }
+                } else {
+                    if (examAns === opt) {
+                        button.classList.add('border-blue-400', 'bg-blue-500/10', 'dark:bg-blue-500/20');
+                        button.innerHTML += `<span class="w-7 h-7 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 text-white flex items-center justify-center text-xs shadow-md shrink-0"><i class="fa-solid fa-pen"></i></span>`;
+                    } else {
+                        button.classList.add('glass-button', 'hover:bg-white/60', 'dark:hover:bg-white/10');
+                    }
+                    button.onclick = () => selectExamOption(current.id, opt);
+                }
+
+                container.appendChild(button);
+            });
+
+            // Re-render MathJax beautifully for current screen elements
+            if (window.MathJax && typeof window.MathJax.typesetPromise === 'function') {
+                window.MathJax.typesetPromise([document.getElementById('questionTextDisplay'), container]);
+            }
+        }
+
+        function renderQuestionMap() {
+            const container = document.getElementById('questionsMapContainer');
+            container.innerHTML = "";
+
+            activeQuestions.forEach((q, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "h-10 rounded-[12px] font-black text-xs transition-all flex items-center justify-center active:scale-90 shadow-sm border border-white/40 dark:border-white/10 ";
+                btn.innerText = q.id;
+
+                const isCurrent = idx === currentIndex;
+                const studyAns = studyResults[q.id];
+                const examAns = examAnswers[q.id];
+
+                if (isCurrent) {
+                    btn.classList.add('ring-4', 'ring-slate-400/40', 'scale-105', 'z-10');
+                }
+
+                if (quizMode === 'study') {
+                    if (studyAns) {
+                        if (studyAns.correct) {
+                            btn.classList.add('bg-gradient-to-br', 'from-emerald-400', 'to-emerald-600', 'text-white', 'border-none');
+                        } else {
+                            btn.classList.add('bg-gradient-to-br', 'from-rose-400', 'to-rose-600', 'text-white', 'border-none');
+                        }
+                    } else {
+                        btn.classList.add('glass-button', 'text-slate-600', 'dark:text-slate-300', 'hover:bg-white/60', 'dark:hover:bg-white/10');
+                    }
+                } else {
+                    if (examAns) {
+                        btn.classList.add('bg-gradient-to-br', 'from-yellow-400', 'to-yellow-600', 'text-white', 'border-none');
+                    } else {
+                        btn.classList.add('glass-button', 'text-slate-600', 'dark:text-slate-300', 'hover:bg-white/60', 'dark:hover:bg-white/10');
+                    }
+                }
+
+                btn.onclick = () => {
+                    currentIndex = idx;
+                    renderQuiz();
+                    renderQuestionMap();
+                }
+
+                container.appendChild(btn);
+            });
+        }
+
+        function selectStudyOption(qId, selectedOpt) {
+            const q = rawQuestionsData.find(item => item.id === qId);
+            const isCorrect = q.answer === selectedOpt;
+            studyResults[qId] = { correct: isCorrect, selectedOption: selectedOpt };
+
+            playQuizSound(isCorrect ? 'correct' : 'wrong');
+            saveStateToLocalStorage();
+            updateStats();
+            renderQuiz();
+            renderQuestionMap();
+        }
+
+        function selectExamOption(qId, selectedOpt) {
+            examAnswers[qId] = selectedOpt;
+            updateStats();
+            renderQuiz();
+            renderQuestionMap();
+        }
+
+        function updateStats() {
+            let correct = 0;
+            let wrong = 0;
+            let totalAnswered = 0;
+
+            if (quizMode === 'study') {
+                rawQuestionsData.forEach(q => {
+                    if (studyResults[q.id]) {
+                        totalAnswered++;
+                        if (studyResults[q.id].correct) correct++;
+                        else wrong++;
+                    }
+                });
+            } else {
+                rawQuestionsData.forEach(q => {
+                    if (examAnswers[q.id]) {
+                        totalAnswered++;
+                        if (examAnswers[q.id] === q.answer) correct++;
+                        else wrong++;
+                    }
+                });
+            }
+
+            document.getElementById('correctCountText').innerText = correct;
+            document.getElementById('wrongCountText').innerText = wrong;
+            document.getElementById('answeredRatioText').innerText = `Yechildi: ${totalAnswered} / ${rawQuestionsData.length}`;
+            
+            const percent = totalAnswered > 0 ? Math.round((totalAnswered / rawQuestionsData.length) * 100) : 0;
+            document.getElementById('progressBarPercentage').innerText = `${percent}%`;
+            document.getElementById('progressBarFill').style.width = `${percent}%`;
+
+            document.getElementById('bookmarkCountText').innerText = `Belgilandi: ${bookmarkedQuestionIds.length}`;
+        }
+
+        function navigateToQuestion(direction) {
+            if (activeQuestions.length === 0) return;
+            currentIndex += direction;
+            if (currentIndex < 0) currentIndex = activeQuestions.length - 1;
+            if (currentIndex >= activeQuestions.length) currentIndex = 0;
+            renderQuiz();
+            renderQuestionMap();
+        }
+
+        function toggleBookmarkActiveQuestion() {
+            if (activeQuestions.length === 0) return;
+            const current = activeQuestions[currentIndex];
+            const idxInBookmarks = bookmarkedQuestionIds.indexOf(current.id);
+
+            if (idxInBookmarks > -1) {
+                bookmarkedQuestionIds.splice(idxInBookmarks, 1);
+            } else {
+                bookmarkedQuestionIds.push(current.id);
+            }
+
+            saveStateToLocalStorage();
+            renderQuiz();
+            updateStats();
+        }
+
+        function resetQuizState() {
+            studyResults = {};
+            examAnswers = {};
+            localStorage.removeItem('math_study_results');
+            updateStats();
+            shuffleCurrentQuestions();
+        }
+
+        function finishExamPrompt() {
+            const answeredCount = Object.keys(examAnswers).length;
+            const modalHtml = `
+                <div id="confirmModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+                    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"></div>
+                    <div class="glass-panel relative rounded-[32px] p-6 max-w-sm w-full text-center shadow-2xl z-10 animate-fade-in">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-white mb-2">Imtihonni yakunlash</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">Jami ${rawQuestionsData.length} ta savoldan ${answeredCount} tasiga javob berdingiz. Imtihonni yakunlashni tasdiqlaysizmi?</p>
+                        <div class="flex gap-3">
+                            <button onclick="document.getElementById('confirmModal').remove()" class="flex-1 py-3 glass-button font-bold text-slate-700 dark:text-slate-200 rounded-xl">Bekor qilish</button>
+                            <button onclick="document.getElementById('confirmModal').remove(); finishExam(false);" class="flex-1 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Tasdiqlash</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+        }
+
+        function finishExam(isTimeout = false) {
+            clearInterval(examTimerInterval);
+            
+            let correct = 0;
+            let wrong = 0;
+            rawQuestionsData.forEach(q => {
+                const ans = examAnswers[q.id];
+                if (ans) {
+                    if (ans === q.answer) correct++;
+                    else wrong++;
+                }
+            });
+
+            const total = rawQuestionsData.length;
+            const percent = Math.round((correct / total) * 100);
+
+            document.getElementById('modalTotalAnswered').innerText = Object.keys(examAnswers).length;
+            document.getElementById('modalCorrect').innerText = correct;
+            document.getElementById('modalIncorrect').innerText = wrong;
+            document.getElementById('modalPercentText').innerText = `Ko'rsatkich: ${percent}%`;
+            document.getElementById('modalPercentBar').style.width = `${percent}%`;
+
+            let grade = "";
+            if (percent >= 86) grade = "Ajoyib natija! (A'lo).";
+            else if (percent >= 71) grade = "Yaxshi ko'rsatkich. (Yaxshi).";
+            else if (percent >= 55) grade = "O'rtacha natija. (Qoniqarli).";
+            else grade = "Qoniqarsiz. Yana urinib ko'ring.";
+            
+            document.getElementById('modalGradeText').innerText = grade;
+
+            const modal = document.getElementById('examResultModal');
+            const inner = document.getElementById('modalContentInner');
+            modal.classList.remove('hidden');
+            
+            setTimeout(() => {
+                inner.classList.remove('scale-95', 'opacity-0');
+                inner.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function reviewExamAnswers() {
+            rawQuestionsData.forEach(q => {
+                const ans = examAnswers[q.id];
+                if (ans) {
+                    studyResults[q.id] = { correct: ans === q.answer, selectedOption: ans };
+                }
+            });
+            saveStateToLocalStorage();
+            closeModalAndReset(false); 
+            changeQuizMode('study');
+        }
+
+        function closeModalAndReset(doReset = true) {
+            const inner = document.getElementById('modalContentInner');
+            inner.classList.remove('scale-100', 'opacity-100');
+            inner.classList.add('scale-95', 'opacity-0');
+            
+            setTimeout(() => {
+                document.getElementById('examResultModal').classList.add('hidden');
+                if(doReset) {
+                    resetQuizState();
+                    changeQuizMode('study');
+                }
+            }, 300);
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+            }
+            updateThemeToggleButton();
+        }
+
+        function updateThemeToggleButton() {
+            const html = document.documentElement;
+            const icon = document.getElementById('themeIcon');
+            if (html.classList.contains('dark')) {
+                icon.className = "fa-solid fa-sun text-xl text-yellow-400";
+            } else {
+                icon.className = "fa-solid fa-moon text-xl text-slate-600";
+            }
+        }
+    </script>
+</body>
+</html>
